@@ -1,0 +1,1 @@
+/home/sblei/Projects/rpi-display-temp/ember/tmp/funnel-input_base_path-APLt0pkv.tmp/0/bower_components/ember-cli-test-loader/test-loader.js

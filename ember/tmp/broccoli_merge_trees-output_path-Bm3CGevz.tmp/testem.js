@@ -1,0 +1,1 @@
+/home/sblei/Projects/rpi-display-temp/ember/node_modules/ember-cli/lib/broccoli/testem.js

@@ -1,0 +1,17 @@
+<h2 id="title">Welcome to Ember</h2>
+{{outlet}}
+
+<div><strong>What's your name?</strong></div>
+<div>{{ input value=myName placeholder="Enter your name here" }}</div>
+
+<div><ul>
+  {{#each message in messages}}
+    <li>{{message.name}} says "{{message.message}}"</li>
+  {{else}}
+    <li>No messages appeared until now.</li>
+  {{/each}}
+</ul></div>
+
+{{input value=myMessage placeholder="Enter your message here"}}
+
+<button {{ action 'sendMessage' }}>Send message</button>

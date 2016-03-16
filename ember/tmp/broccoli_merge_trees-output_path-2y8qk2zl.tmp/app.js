@@ -1,0 +1,1 @@
+/home/sblei/Projects/rpi-display-temp/ember/app/app.js

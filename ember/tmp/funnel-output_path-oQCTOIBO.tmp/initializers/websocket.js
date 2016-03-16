@@ -1,0 +1,1 @@
+/home/sblei/Projects/rpi-display-temp/ember/tmp/funnel-input_base_path-TTrK42R3.tmp/0/initializers/websocket.js
