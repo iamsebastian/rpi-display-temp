@@ -1,0 +1,13 @@
+<p>This is a line-chart.</p>
+{{ember-chart type="Line" data=eachTemps width=1000}}
+
+{{!--
+<ul>
+{{#each model as |temp|}}
+  <li>{{temp.id}}: {{temp.temp}}</li>
+{{/each}}
+</ul>
+--}}
+
+<button {{action 'logData'}}></button>
+{{yield}}

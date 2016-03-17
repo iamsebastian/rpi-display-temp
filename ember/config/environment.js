@@ -17,7 +17,7 @@ module.exports = function(environment) {
       'default-src': "'none'",
       'script-src': "'self' 'unsafe-eval' 'unsafe-inline' http://*.gstatic.com http://*.googleapis.com http://use.typekit.net",
       'font-src': "'self' data: http://*.gstatic.com",
-      'connect-src': "'self' ws://localhost:7000 localhost:7000",
+      'connect-src': "'self' ws://localhost:3000 localhost:3000",
       'img-src': "'self' http://*.gstatic.com http://*.googleapis.com http://p.typekit.net",
       'style-src': "'self' 'unsafe-inline' http://*.googleapis.com http://use.typekit.net",
       'media-src': "'self' data:"

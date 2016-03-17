@@ -1,17 +1,19 @@
 <h2 id="title">Welcome to Ember</h2>
 {{outlet}}
 
+{{line-chart model=model}}
+
 <div><strong>What's your name?</strong></div>
 <div>{{ input value=myName placeholder="Enter your name here" }}</div>
 
 <div><ul>
-  {{#each message in messages}}
-    <li>{{message.name}} says "{{message.message}}"</li>
+  {{#each model as |model|}}
+    <li>{{model.id}} has "{{model.temp}}"</li>
   {{else}}
-    <li>No messages appeared until now.</li>
+    <li>No temperatures appeared until now.</li>
   {{/each}}
 </ul></div>
 
-{{input value=myMessage placeholder="Enter your message here"}}
+<!--{{input value=myMessage placeholder="Enter your message here"}}-->
 
-<button {{ action 'sendMessage' }}>Send message</button>
+<!--<button {{ action 'sendMessage' }}>Send message</button>-->

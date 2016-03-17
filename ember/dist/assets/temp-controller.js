@@ -32,11 +32,70 @@ define('temp-controller/components/app-version', ['exports', 'ember-cli-app-vers
     name: name
   });
 });
+define('temp-controller/components/ember-chart', ['exports', 'ember-cli-chart/components/ember-chart'], function (exports, _emberCliChartComponentsEmberChart) {
+  exports['default'] = _emberCliChartComponentsEmberChart['default'];
+});
+define('temp-controller/components/line-chart', ['exports', 'ember'], function (exports, _ember) {
+  exports['default'] = _ember['default'].Component.extend({
+    //data: Ember.computed('model', function() {
+    //return {
+    //labels: [],
+    //datasets: [{
+    //label: 'ThisLabel',
+    //data: this.get('model').mapBy('temp')
+    //}]
+    //}
+    //}),
+    temps: _ember['default'].computed('model', function () {
+      return {
+        //labels: [],
+        //labels: this.get('model').mapBy('id'),
+        labels: [],
+        datasets: [{
+          //label: this.get('model.id'),
+          label: 'A data set.',
+          //data: [this.get('model.temp')]
+          data: this.get('model').mapBy('temp')
+        }]
+      };
+    }),
+
+    eachTemps: _ember['default'].computed('model.[]', function () {
+      //var models = this.get('model');
+      var lastId = this.get('model').lastObject.id;
+      var models = this.get('model').filterBy('id', function (id) {
+        return id - 30 > lastId;
+      });
+      //var models = this.store.query('temp', {
+      //filter: {
+
+      //}
+      //}
+      return {
+        labels: models.mapBy('id'),
+        datasets: [{
+          label: 'A data set.',
+          data: models.mapBy('temp')
+        }]
+      };
+    }),
+
+    actions: {
+      logData: function logData() {
+        console.log(this.get('model')[0]);
+      }
+    }
+  });
+});
 define('temp-controller/controllers/application', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Controller.extend({
     myName: '',
     myMessage: '',
+    actualMsg: '',
+    msgs: [],
     messages: _ember['default'].A([]),
+
+    //temps: Ember.computed( f
 
     init: function init() {
       this._super();
@@ -53,8 +112,16 @@ define('temp-controller/controllers/application', ['exports', 'ember'], function
     },
 
     messageHandler: function messageHandler(event) {
-      console.log('A message appeared: ' + event.data);
-      this.get('messages').pushObject(JSON.parse(event.data));
+      var temp = JSON.parse(event.data);
+      //var msgs = this.get('messages');
+      console.log('A temperature appeared: ' + event.data);
+
+      //msgs.pushObject(temp);
+
+      //if (msgs.length > 100) {
+      //msgs.shiftObject();
+      //}
+      this.store.push({ data: [temp] });
     },
 
     actions: {
@@ -254,6 +321,11 @@ define("temp-controller/instance-initializers/ember-data", ["exports", "ember-da
     initialize: _emberDataPrivateInstanceInitializersInitializeStoreService["default"]
   };
 });
+define('temp-controller/models/temp', ['exports', 'ember-data'], function (exports, _emberData) {
+  exports['default'] = _emberData['default'].Model.extend({
+    temp: _emberData['default'].attr('number')
+  });
+});
 define('temp-controller/resolver', ['exports', 'ember-resolver'], function (exports, _emberResolver) {
   exports['default'] = _emberResolver['default'];
 });
@@ -268,7 +340,11 @@ define('temp-controller/router', ['exports', 'ember', 'temp-controller/config/en
   exports['default'] = Router;
 });
 define('temp-controller/routes/application', ['exports', 'ember'], function (exports, _ember) {
-  exports['default'] = _ember['default'].Route.extend({});
+  exports['default'] = _ember['default'].Route.extend({
+    model: function model() {
+      return this.store.peekAll('temp');
+    }
+  });
 });
 define('temp-controller/services/ajax', ['exports', 'ember-ajax/services/ajax'], function (exports, _emberAjaxServicesAjax) {
   Object.defineProperty(exports, 'default', {
@@ -399,18 +475,18 @@ define("temp-controller/templates/application", ["exports"], function (exports) 
           "loc": {
             "source": null,
             "start": {
-              "line": 8,
+              "line": 10,
               "column": 2
             },
             "end": {
-              "line": 10,
+              "line": 12,
               "column": 2
             }
           },
           "moduleName": "temp-controller/templates/application.hbs"
         },
         isEmpty: false,
-        arity: 0,
+        arity: 1,
         cachedFragment: null,
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
@@ -420,7 +496,7 @@ define("temp-controller/templates/application", ["exports"], function (exports) 
           var el1 = dom.createElement("li");
           var el2 = dom.createComment("");
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode(" says \"");
+          var el2 = dom.createTextNode(" has \"");
           dom.appendChild(el1, el2);
           var el2 = dom.createComment("");
           dom.appendChild(el1, el2);
@@ -438,8 +514,8 @@ define("temp-controller/templates/application", ["exports"], function (exports) 
           morphs[1] = dom.createMorphAt(element0, 2, 2);
           return morphs;
         },
-        statements: [["content", "message.name", ["loc", [null, [9, 8], [9, 24]]]], ["content", "message.message", ["loc", [null, [9, 31], [9, 50]]]]],
-        locals: [],
+        statements: [["content", "model.id", ["loc", [null, [11, 8], [11, 20]]]], ["content", "model.temp", ["loc", [null, [11, 26], [11, 40]]]]],
+        locals: ["model"],
         templates: []
       };
     })();
@@ -451,11 +527,11 @@ define("temp-controller/templates/application", ["exports"], function (exports) 
           "loc": {
             "source": null,
             "start": {
-              "line": 10,
+              "line": 12,
               "column": 2
             },
             "end": {
-              "line": 12,
+              "line": 14,
               "column": 2
             }
           },
@@ -470,7 +546,7 @@ define("temp-controller/templates/application", ["exports"], function (exports) 
           var el1 = dom.createTextNode("    ");
           dom.appendChild(el0, el1);
           var el1 = dom.createElement("li");
-          var el2 = dom.createTextNode("No messages appeared until now.");
+          var el2 = dom.createTextNode("No temperatures appeared until now.");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
@@ -499,7 +575,7 @@ define("temp-controller/templates/application", ["exports"], function (exports) 
             "column": 0
           },
           "end": {
-            "line": 18,
+            "line": 20,
             "column": 0
           }
         },
@@ -517,6 +593,10 @@ define("temp-controller/templates/application", ["exports"], function (exports) 
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
@@ -548,29 +628,92 @@ define("temp-controller/templates/application", ["exports"], function (exports) 
         dom.appendChild(el0, el1);
         var el1 = dom.createComment("");
         dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n\n");
         dom.appendChild(el0, el1);
-        var el1 = dom.createElement("button");
-        var el2 = dom.createTextNode("Send message");
-        dom.appendChild(el1, el2);
+        var el1 = dom.createComment("<button {{ action 'sendMessage' }}>Send message</button>");
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element1 = dom.childAt(fragment, [12]);
         var morphs = new Array(5);
         morphs[0] = dom.createMorphAt(fragment, 2, 2, contextualElement);
-        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [6]), 0, 0);
-        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [8, 0]), 1, 1);
-        morphs[3] = dom.createMorphAt(fragment, 10, 10, contextualElement);
-        morphs[4] = dom.createElementMorph(element1);
+        morphs[1] = dom.createMorphAt(fragment, 4, 4, contextualElement);
+        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [8]), 0, 0);
+        morphs[3] = dom.createMorphAt(dom.childAt(fragment, [10, 0]), 1, 1);
+        morphs[4] = dom.createMorphAt(fragment, 12, 12, contextualElement);
         return morphs;
       },
-      statements: [["content", "outlet", ["loc", [null, [2, 0], [2, 10]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "myName", ["loc", [null, [5, 20], [5, 26]]]]], [], []], "placeholder", "Enter your name here"], ["loc", [null, [5, 5], [5, 64]]]], ["block", "each", [["get", "message", ["loc", [null, [8, 10], [8, 17]]]], ["get", "in", ["loc", [null, [8, 18], [8, 20]]]], ["get", "messages", ["loc", [null, [8, 21], [8, 29]]]]], [], 0, 1, ["loc", [null, [8, 2], [12, 11]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "myMessage", ["loc", [null, [15, 14], [15, 23]]]]], [], []], "placeholder", "Enter your message here"], ["loc", [null, [15, 0], [15, 63]]]], ["element", "action", ["sendMessage"], [], ["loc", [null, [17, 8], [17, 34]]]]],
+      statements: [["content", "outlet", ["loc", [null, [2, 0], [2, 10]]]], ["inline", "line-chart", [], ["model", ["subexpr", "@mut", [["get", "model", ["loc", [null, [4, 19], [4, 24]]]]], [], []]], ["loc", [null, [4, 0], [4, 26]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "myName", ["loc", [null, [7, 20], [7, 26]]]]], [], []], "placeholder", "Enter your name here"], ["loc", [null, [7, 5], [7, 64]]]], ["block", "each", [["get", "model", ["loc", [null, [10, 10], [10, 15]]]]], [], 0, 1, ["loc", [null, [10, 2], [14, 11]]]], ["inline", "input", [], ["value", ["subexpr", "@mut", [["get", "myMessage", ["loc", [null, [17, 18], [17, 27]]]]], [], []], "placeholder", "Enter your message here"], ["loc", [null, [17, 4], [17, 67]]]]],
       locals: [],
       templates: [child0, child1]
+    };
+  })());
+});
+define("temp-controller/templates/components/line-chart", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "fragmentReason": {
+          "name": "missing-wrapper",
+          "problems": ["multiple-nodes", "wrong-type"]
+        },
+        "revision": "Ember@2.4.2",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 14,
+            "column": 0
+          }
+        },
+        "moduleName": "temp-controller/templates/components/line-chart.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createElement("p");
+        var el2 = dom.createTextNode("This is a line-chart.");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("button");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var element0 = dom.childAt(fragment, [5]);
+        var morphs = new Array(3);
+        morphs[0] = dom.createMorphAt(fragment, 2, 2, contextualElement);
+        morphs[1] = dom.createElementMorph(element0);
+        morphs[2] = dom.createMorphAt(fragment, 7, 7, contextualElement);
+        return morphs;
+      },
+      statements: [["inline", "ember-chart", [], ["type", "Line", "data", ["subexpr", "@mut", [["get", "eachTemps", ["loc", [null, [2, 31], [2, 40]]]]], [], []], "width", 1000], ["loc", [null, [2, 0], [2, 53]]]], ["element", "action", ["logData"], [], ["loc", [null, [12, 8], [12, 28]]]], ["content", "yield", ["loc", [null, [13, 0], [13, 9]]]]],
+      locals: [],
+      templates: []
     };
   })());
 });
@@ -606,7 +749,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("temp-controller/app")["default"].create({"name":"temp-controller","version":"0.0.0+f13df330"});
+  require("temp-controller/app")["default"].create({"name":"temp-controller","version":"0.0.0+9c906f3d"});
 }
 
 /* jshint ignore:end */

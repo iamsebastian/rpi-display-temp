@@ -3,7 +3,11 @@ import Ember from 'ember';
 export default Ember.Controller.extend({
   myName: '',
   myMessage: '',
+  actualMsg: '',
+  msgs: [],
   messages: Ember.A([]),
+
+  //temps: Ember.computed( f
 
   init: function() {
     this._super();
@@ -20,8 +24,16 @@ export default Ember.Controller.extend({
   },
 
   messageHandler: function(event) {
-    console.log(`A message appeared: ${event.data}`);
-    this.get('messages').pushObject(JSON.parse(event.data));
+    var temp = JSON.parse(event.data);
+    //var msgs = this.get('messages');
+    console.log(`A temperature appeared: ${event.data}`);
+
+    //msgs.pushObject(temp);
+
+    //if (msgs.length > 100) {
+      //msgs.shiftObject();
+    //}
+    this.store.push({data: [temp]});
   },
 
   actions: {

@@ -1,1 +1,0 @@
-/home/sblei/Projects/rpi-display-temp/ember/tmp/funnel-input_base_path-fP9upeyb.tmp/0/index.js

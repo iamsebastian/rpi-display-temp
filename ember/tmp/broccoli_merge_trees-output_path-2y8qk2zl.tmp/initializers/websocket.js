@@ -1,1 +1,0 @@
-/home/sblei/Projects/rpi-display-temp/ember/app/initializers/websocket.js
