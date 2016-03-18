@@ -13,7 +13,7 @@ define('temp-controller/tests/components/line-chart.jshint', ['exports'], functi
   QUnit.module('JSHint - components/line-chart.js');
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'components/line-chart.js should pass jshint.\ncomponents/line-chart.js: line 50, col 40, Missing semicolon.\n\n1 error');
+    assert.ok(true, 'components/line-chart.js should pass jshint.');
   });
 });
 define('temp-controller/tests/controllers/application.jshint', ['exports'], function (exports) {
@@ -22,7 +22,7 @@ define('temp-controller/tests/controllers/application.jshint', ['exports'], func
   QUnit.module('JSHint - controllers/application.js');
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'controllers/application.js should pass jshint.\ncontrollers/application.js: line 17, col 33, \'event\' is defined but never used.\n\n1 error');
+    assert.ok(false, 'controllers/application.js should pass jshint.\ncontrollers/application.js: line 11, col 9, \'foo\' is defined but never used.\ncontrollers/application.js: line 24, col 33, \'event\' is defined but never used.\n\n2 errors');
   });
 });
 define('temp-controller/tests/helpers/destroy-app', ['exports', 'ember'], function (exports, _ember) {

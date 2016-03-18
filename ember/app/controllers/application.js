@@ -7,6 +7,13 @@ export default Ember.Controller.extend({
   msgs: [],
   messages: Ember.A([]),
 
+  getTemp: function (msg) {
+    let foo;
+    let temp = parseInt(msg.attributes.temp, 10);
+    let tempStr = `${temp/1000}°C`;
+    return tempStr;
+  },
+
   //temps: Ember.computed( f
 
   init: function() {
@@ -25,15 +32,9 @@ export default Ember.Controller.extend({
 
   messageHandler: function(event) {
     var temp = JSON.parse(event.data);
-    //var msgs = this.get('messages');
-    console.log(`A temperature appeared: ${event.data}`);
-
-    //msgs.pushObject(temp);
-
-    //if (msgs.length > 100) {
-      //msgs.shiftObject();
-    //}
+    //console.log(`A temperature appeared: ${event.data}`);
     this.store.push({data: [temp]});
+    this.set('actualTemp', this.getTemp(temp));
   },
 
   actions: {

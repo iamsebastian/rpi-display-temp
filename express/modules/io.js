@@ -7,9 +7,19 @@ var temperatures = [];
 
 var ex = module.exports = {};
 
-var initialSendSavedTemps = function (socket) {
+var initialSendLastMinuteTemps = function (socket) {
   temperatures.forEach(function (_temp) {
-    socket.send(JSON.stringify(_temp));
+    if (_temp.id % 60 === 0) {
+      socket.send(JSON.stringify(_temp));
+    }
+  });
+};
+
+var initialSendLast60Temps = function (socket) {
+  temperatures.forEach(function (_temp) {
+    if (_temp.id > counter - 60) {
+      socket.send(JSON.stringify(_temp));
+    }
   });
 };
 
@@ -30,9 +40,11 @@ var addTemperature = function (temp) {
 
 var readTempNow = function() {
   readTemp().then(function gotTemp(temp) {
-    if(temperatures.length > 100) {
-      temperatures.shift();
-    }
+    /*
+     *if(temperatures.length > 100) {
+     *  temperatures.shift();
+     *}
+     */
     temp = tempToModel(temp);
     temperatures.push(temp);
     wss.broadcast(temp);
@@ -52,7 +64,8 @@ ex.listen = function() {
   wss.on('connection', function (socket) {
     //wss.broadcast({ name: 'admin',  message: 'One joined the chat.' });
 
-    initialSendSavedTemps(socket);
+    initialSendLast60Temps(socket);
+    initialSendLastMinuteTemps(socket);
 
     socket.on('message', function (msg, msgObj) {
       msg = JSON.parse(msg);

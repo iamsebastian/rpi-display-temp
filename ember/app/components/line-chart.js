@@ -1,53 +1,77 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  //data: Ember.computed('model', function() {
-    //return {
-      //labels: [],
-      //datasets: [{
-        //label: 'ThisLabel',
-        //data: this.get('model').mapBy('temp')
-      //}]
-    //}
-  //}),
-  temps: Ember.computed('model', function () {
-    return {
-      //labels: [],
-      //labels: this.get('model').mapBy('id'),
-      labels: [],
-      datasets: [{
-        //label: this.get('model.id'),
-        label: 'A data set.',
-        //data: [this.get('model.temp')]
-        data: this.get('model').mapBy('temp')
-      }]
-    };
-  }),
+  chartOptions: {
+    // Animation will decrease performance to null.
+    animation: false,
+    animationSteps: 5,
+    scaleOverride: true,
+    //scaleBeginAtZero: true,
+    scaleStartValue: 15,
+    scaleSteps: 9,
+    scaleStepWidth: 10,
+    scaleIntegersOnly: true,
+    // Grid and legend.
+    showScale: true
+  },
+
+  height: 320,
+  width: 960,
 
   eachTemps: Ember.computed('model.[]', function () {
-    //var models = this.get('model');
-    var lastId = this.get('model').lastObject.id;
-    var models = this.get('model')
-    .filterBy('id', function (id) {
-      return id - 30 > lastId;
+    var lastId = parseInt(this.get('model.lastObject.id'), 10);
+    var models = this.get('model').filter(function (temp) {
+      return parseInt(temp.id, 10) > lastId - 60;
     });
-    //var models = this.store.query('temp', {
-      //filter: {
+    var getColor = function (opac) {
+      return `rgba(95, 177, 160, ${opac})`;
+    };
 
-      //}
-    //}
     return {
       labels: models.mapBy('id'),
       datasets: [{
         label: 'A data set.',
-        data: models.mapBy('temp')
-      }]
+        data: models.mapBy('tempFloat'),
+        fillColor: getColor('.4'),
+        scaleLineColor: '#fff',
+        scaleFontColor: '#fff',
+        strokeColor: getColor('.6'),
+        pointColor: getColor('.7'),
+        pointStrokeColor: "#eee",
+        pointHighlightFill: "#eee",
+        pointHighlightStroke: getColor('.8')
+      }],
+    };
+  }),
+
+  each60sTemps: Ember.computed('model.[]', function () {
+    var models = this.get('model').filter(function (temp) {
+      return parseInt(temp.id, 10) % 60 === 0;
+    });
+    var getColor = function (opac) {
+      return `rgba(179, 145, 45, ${opac})`;
+    };
+
+    return {
+      labels: models.mapBy('id'),
+      datasets: [{
+        label: 'A data set.',
+        data: models.mapBy('tempFloat'),
+        fillColor: getColor('.4'),
+        scaleLineColor: '#fff',
+        scaleFontColor: '#fff',
+        strokeColor: getColor('.6'),
+        pointColor: getColor('.7'),
+        pointStrokeColor: "#eee",
+        pointHighlightFill: "#eee",
+        pointHighlightStroke: getColor('.8')
+      }],
     };
   }),
 
   actions: {
     logData: function () {
-      console.log(this.get('model')[0])
+      console.log(this.get('model')[0]);
     }
   }
 });

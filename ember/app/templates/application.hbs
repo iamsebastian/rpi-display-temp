@@ -1,19 +1,13 @@
-<h2 id="title">Welcome to Ember</h2>
-{{outlet}}
+<div class="container">
+  <div class="row">
+    {{outlet}}
 
-{{line-chart model=model}}
+    <h3><small>Aktuelle Temperatur:</small> {{actualTemp}}</h3>
 
-<div><strong>What's your name?</strong></div>
-<div>{{ input value=myName placeholder="Enter your name here" }}</div>
+    {{line-chart model=model}}
 
-<div><ul>
-  {{#each model as |model|}}
-    <li>{{model.id}} has "{{model.temp}}"</li>
-  {{else}}
-    <li>No temperatures appeared until now.</li>
-  {{/each}}
-</ul></div>
-
-<!--{{input value=myMessage placeholder="Enter your message here"}}-->
-
-<!--<button {{ action 'sendMessage' }}>Send message</button>-->
+    {{! this is just to let ember add hook on model updates }}
+    {{#each model as |model|}}
+    {{/each}}
+  </div>
+</div>
