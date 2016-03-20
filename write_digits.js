@@ -1,24 +1,35 @@
+var getTemp = require('./lib/read_temp');
+var q = require('q');
 var five = require("johnny-five");
 var raspi = require("raspi-io");
-var digit;
 var board = new five.Board({
   debug: true,
   io: new raspi(),
-  repl: false
+  repl: true
 });
 
 function initDigit() {
   digit = new five.Led.Digits({
     pins: {
-      data: 'GPIO24',
-      clock: 'GPIO6',
-      cs: 'GPIO25'
-      //data: 5,
-      //clock: 6,
-      //cs: 22
+      data: 'GPIO10',
+      clock: 'GPIO11',
+      cs: 'GPIO8'
+      //data: 3,
+      //clock: 4,
+      //cs: 5
     }
   });
   return digit;
+};
+
+function writeTemp(digit) {
+  //console.log('Get temperature ...');
+  getTemp()
+  .then(function(temp) {
+    //console.log('Got temperature: ', temp);
+    digit.print('' + temp + '   ');
+    writeTemp(digit);
+  });
 };
 
 board.on('ready', function() {
@@ -27,15 +38,30 @@ board.on('ready', function() {
 
   console.log('Board is ready ...');
 
-  digit.clear();
-  digit.on();
-  digit.print('----');
+  //writeTemp(digit);
+  this.repl.inject({
+    digit: digit
+  });
+
+  //digit.clear();
+  //digit.print();
+  //digit.brightness(80);
+  //digit.print(12345678);
 
   //console.log(digit);
+  //this.wait(2000, function() {
+    //digit.print('.-.-.-.-.-.-.-.-');
+  //});
 
-  this.wait(5000, function() {
-    console.log('5000ms are over ...');
+  //this.wait(5000, function() {
+    //digit.print('12345678');
+    //console.log('5000ms are over ...');
     //console.log('Will now exit ...');
     //process.exit();
-  });
+  //});
+
+  //this.wait(8000, function() {
+    //digit.print('00--00--');
+    //console.log('8000ms are over ...');
+  //});
 });
