@@ -1,0 +1,13 @@
+<div class="container">
+  <div class="row">
+    {{outlet}}
+
+    <h3><small>Aktuelle Temperatur:</small> {{actualTemp}}</h3>
+
+    {{line-chart model=model}}
+
+    {{! this is just to let ember add hook on model updates }}
+    {{#each model as |model|}}
+    {{/each}}
+  </div>
+</div>
