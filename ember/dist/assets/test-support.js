@@ -6189,7 +6189,7 @@ QUnit.notifications = function( options ) {
 /* globals jQuery,QUnit */
 
 QUnit.config.urlConfig.push({ id: 'nocontainer', label: 'Hide container'});
-QUnit.config.urlConfig.push({ id: 'nojshint', label: 'Disable JSHint'});
+QUnit.config.urlConfig.push({ id: 'nolint', label: 'Disable Linting'});
 QUnit.config.urlConfig.push({ id: 'dockcontainer', label: 'Dock container'});
 QUnit.config.testTimeout = 60000; //Default Test Timeout 60 Seconds
 
@@ -6217,16 +6217,23 @@ jQuery(document).ready(function() {
 jQuery(document).ready(function() {
   var TestLoaderModule = require('ember-cli/test-loader');
   var TestLoader = TestLoaderModule['default'];
+  var addModuleExcludeMatcher = TestLoaderModule['addModuleExcludeMatcher'];
   var addModuleIncludeMatcher = TestLoaderModule['addModuleIncludeMatcher'];
 
-  function moduleMatcher(moduleName) {
-    return moduleName.match(/\/.*[-_]test$/) || (!QUnit.urlParams.nojshint && moduleName.match(/\.jshint$/));
+  function excludeModule(moduleName) {
+    return QUnit.urlParams.nolint &&
+           moduleName.match(/\.(jshint|lint-test)$/);
   }
 
-  if (addModuleIncludeMatcher) {
-    addModuleIncludeMatcher(moduleMatcher);
+  function includeModule(moduleName) {
+    return moduleName.match(/\.jshint$/);
+  }
+
+  if (addModuleExcludeMatcher && addModuleIncludeMatcher) {
+    addModuleExcludeMatcher(excludeModule);
+    addModuleIncludeMatcher(includeModule);
   } else {
-    TestLoader.prototype.shouldLoadModule = moduleMatcher;
+    throw new Error("You must upgrade your version of ember-cli-test-loader to 1.0.0 to use this version of ember-cli-qunit")
   }
 
   TestLoader.prototype.moduleLoadFailure = function(moduleName, error) {

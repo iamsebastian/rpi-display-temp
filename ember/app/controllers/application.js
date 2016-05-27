@@ -18,7 +18,7 @@ export default Ember.Controller.extend({
 
   init: function() {
     this._super();
-    var socket = this.get('websockets').socketFor('ws://localhost:3000');
+    var socket = this.get('websockets').socketFor('ws://192.168.178.37:3000');
     socket.on('open', this.openHandler, this);
     socket.on('message', this.messageHandler, this);
     socket.on('close', function(event) {
@@ -39,7 +39,7 @@ export default Ember.Controller.extend({
 
   actions: {
     sendMessage: function() {
-      var socket = this.get('websockets').socketFor('ws://localhost:3000');
+      var socket = this.get('websockets').socketFor('ws://192.168.178.37:3000');
       var payload = {
         name: this.get('myName'),
         message: this.get('myMessage')

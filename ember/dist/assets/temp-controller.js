@@ -131,7 +131,7 @@ define('temp-controller/controllers/application', ['exports', 'ember'], function
 
     init: function init() {
       this._super();
-      var socket = this.get('websockets').socketFor('ws://localhost:3000');
+      var socket = this.get('websockets').socketFor('ws://192.168.178.37:3000');
       socket.on('open', this.openHandler, this);
       socket.on('message', this.messageHandler, this);
       socket.on('close', function (event) {
@@ -152,7 +152,7 @@ define('temp-controller/controllers/application', ['exports', 'ember'], function
 
     actions: {
       sendMessage: function sendMessage() {
-        var socket = this.get('websockets').socketFor('ws://localhost:3000');
+        var socket = this.get('websockets').socketFor('ws://192.168.178.37:3000');
         var payload = {
           name: this.get('myName'),
           message: this.get('myMessage')
@@ -712,7 +712,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("temp-controller/app")["default"].create({"name":"temp-controller","version":"0.0.0+85044e62"});
+  require("temp-controller/app")["default"].create({"name":"temp-controller","version":"0.0.0+f494f093"});
 }
 
 /* jshint ignore:end */

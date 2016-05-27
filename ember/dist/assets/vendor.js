@@ -74295,7 +74295,7 @@ define('ember-data/-private/system/is-array-like', ['exports', 'ember'], functio
     return false;
   }
 });
-define("ember-data/-private/system/many-array", ["exports", "ember", "ember-data/-private/debug", "ember-data/-private/system/promise-proxies"], function (exports, _ember, _emberDataPrivateDebug, _emberDataPrivateSystemPromiseProxies) {
+define("ember-data/-private/system/many-array", ["exports", "ember", "ember-data/-private/debug", "ember-data/-private/system/promise-proxies", "ember-data/-private/system/store/common"], function (exports, _ember, _emberDataPrivateDebug, _emberDataPrivateSystemPromiseProxies, _emberDataPrivateSystemStoreCommon) {
   /**
     @module ember-data
   */
@@ -74377,12 +74377,15 @@ define("ember-data/-private/system/many-array", ["exports", "ember", "ember-data
       //a hack for not removing new records
       //TODO remove once we have proper diffing
       var newRecords = this.currentState.filter(function (internalModel) {
-        return internalModel.isNew();
+        return internalModel.isNew() && toSet.indexOf(internalModel) === -1;
       });
       toSet = toSet.concat(newRecords);
       var oldLength = this.length;
       this.arrayContentWillChange(0, this.length, toSet.length);
-      this.set('length', toSet.length);
+      // It’s possible the parent side of the relationship may have been unloaded by this point
+      if ((0, _emberDataPrivateSystemStoreCommon._objectIsAlive)(this)) {
+        this.set('length', toSet.length);
+      }
       this.currentState = toSet;
       this.arrayContentDidChange(0, oldLength, this.length);
       //TODO Figure out to notify only on additions and maybe only if unloaded
@@ -85277,13 +85280,15 @@ define('ember-data/adapters/rest', ['exports', 'ember', 'ember-data/adapter', 'e
     },
 
     buildQuery: function buildQuery(snapshot) {
-      var include = snapshot.include;
-
       var query = {};
 
       if ((0, _emberDataPrivateFeatures['default'])('ds-finder-include')) {
-        if (include) {
-          query.include = include;
+        if (snapshot) {
+          var include = snapshot.include;
+
+          if (include) {
+            query.include = include;
+          }
         }
       }
 
@@ -88774,7 +88779,7 @@ define('ember-data/transform', ['exports', 'ember'], function (exports, _ember) 
 define("ember-data/version", ["exports"], function (exports) {
   "use strict";
 
-  exports["default"] = "2.4.0";
+  exports["default"] = "2.4.2";
 });
 define("ember-inflector/index", ["exports", "ember", "ember-inflector/lib/system", "ember-inflector/lib/ext/string"], function (exports, _ember, _emberInflectorLibSystem, _emberInflectorLibExtString) {
   /* global define, module */
